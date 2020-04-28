@@ -1,4 +1,5 @@
 import React, { useState, CSSProperties } from 'react'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { List, ListItem, Icon } from '@hospitalrun/components'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useHistory } from 'react-router'
@@ -36,10 +37,10 @@ const Sidebar = () => {
     splittedPath[1].includes('patients')
       ? 'patient'
       : splittedPath[1].includes('appointments')
-      ? 'appointment'
-      : splittedPath[1].includes('labs')
-      ? 'labs'
-      : 'none',
+        ? 'appointment'
+        : splittedPath[1].includes('labs')
+          ? 'labs'
+          : 'none',
   )
 
   const setExpansion = (item: string) => {
@@ -57,7 +58,7 @@ const Sidebar = () => {
     borderBottomWidth: 0,
     color:
       (splittedPath[1].includes('patients') || splittedPath[1].includes('appointments')) &&
-      splittedPath.length > 2
+        splittedPath.length > 2
         ? 'white'
         : 'black',
   }
@@ -68,7 +69,7 @@ const Sidebar = () => {
     borderBottomWidth: 0,
     color:
       (splittedPath[1].includes('patients') || splittedPath[1].includes('appointments')) &&
-      splittedPath.length < 3
+        splittedPath.length < 3
         ? 'white'
         : 'black',
   }
@@ -85,6 +86,22 @@ const Sidebar = () => {
         style={listItemStyle}
       >
         <Icon icon="dashboard" /> {!sidebarCollapsed && t('dashboard.label')}
+      </ListItem>
+    </>
+  )
+
+  const getChairLinks = () => (
+    <>
+      <ListItem
+        active={pathname === '/chair'}
+        onClick={() => {
+          navigateTo('/chair')
+          setExpansion('none')
+        }}
+        className="nav-item"
+        style={listItemStyle}
+      >
+        <FontAwesomeIcon icon={"wheelchair"} /> {!sidebarCollapsed && t('Chair-control')}
       </ListItem>
     </>
   )
@@ -253,6 +270,7 @@ const Sidebar = () => {
           {getPatientLinks()}
           {getAppointmentLinks()}
           {getLabLinks()}
+          {getChairLinks()}
         </List>
       </div>
     </nav>
