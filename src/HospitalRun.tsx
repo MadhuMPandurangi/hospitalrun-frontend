@@ -6,6 +6,7 @@ import Appointments from 'scheduling/appointments/Appointments'
 import NewAppointment from 'scheduling/appointments/new/NewAppointment'
 import EditAppointment from 'scheduling/appointments/edit/EditAppointment'
 import ViewAppointment from 'scheduling/appointments/view/ViewAppointment'
+import Chair from './chair/Chair';
 import Breadcrumbs from 'breadcrumbs/Breadcrumbs'
 import { ButtonBarProvider } from 'page-header/ButtonBarProvider'
 import ButtonToolBar from 'page-header/ButtonToolBar'
@@ -37,7 +38,7 @@ const HospitalRun = () => {
               role="main"
               className={`${
                 sidebarCollapsed ? 'col-md-10 col-lg-11' : 'col-md-9 col-lg-10'
-              } ml-sm-auto px-4`}
+                } ml-sm-auto px-4`}
             >
               <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 className="h2">{title}</h1>
@@ -101,6 +102,13 @@ const HospitalRun = () => {
                     component={ViewAppointment}
                   />
                   <PrivateRoute isAuthenticated path="/labs" component={Labs} />
+
+                  <PrivateRoute
+                    isAuthenticated={permissions.includes(Permissions.ReadAppointments)}
+                    exact
+                    path="/chair"
+                    component={Chair}
+                  />
                 </Switch>
               </div>
               <Toaster autoClose={5000} hideProgressBar draggable />
