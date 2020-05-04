@@ -1,11 +1,8 @@
-import shortid from 'shortid'
+import escapeStringRegexp from 'escape-string-regexp'
 import Patient from '../../model/Patient'
+import generateCode from '../../util/generateCode'
 import Repository from './Repository'
 import { patients } from '../../config/pouchdb'
-
-const formatPatientCode = (prefix: string, sequenceNumber: string) => `${prefix}${sequenceNumber}`
-
-const getPatientCode = (): string => formatPatientCode('P-', shortid.generate())
 
 export class PatientRepository extends Repository<Patient> {
   constructor() {
@@ -13,12 +10,13 @@ export class PatientRepository extends Repository<Patient> {
   }
 
   async search(text: string): Promise<Patient[]> {
+    const escapedString = escapeStringRegexp(text)
     return super.search({
       selector: {
         $or: [
           {
             fullName: {
-              $regex: RegExp(text, 'i'),
+              $regex: RegExp(escapedString, 'i'),
             },
           },
           {
@@ -30,7 +28,7 @@ export class PatientRepository extends Repository<Patient> {
   }
 
   async save(entity: Patient): Promise<Patient> {
-    const patientCode = getPatientCode()
+    const patientCode = generateCode('P')
     entity.code = patientCode
     return super.save(entity)
   }
