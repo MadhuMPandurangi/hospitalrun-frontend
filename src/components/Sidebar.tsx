@@ -104,6 +104,22 @@ const Sidebar = () => {
     </>
   )
 
+  const getFeedbackLinks = () => (
+    <>
+      <ListItem
+        active={pathname === '/feedback'}
+        onClick={() => {
+          navigateTo('/feedback')
+          setExpansion('none')
+        }}
+        className="nav-item"
+        style={listItemStyle}
+      >
+        <FontAwesomeIcon icon={"comments"} /> {!sidebarCollapsed && t('Feedback')}
+      </ListItem>
+    </>
+  )
+
   const getPatientLinks = () => (
     <>
       <ListItem
@@ -269,6 +285,7 @@ const Sidebar = () => {
           {getAppointmentLinks()}
           {getLabLinks()}
           {getChairLinks()}
+          {getFeedbackLinks()}
         </List>
       </div>
     </nav>

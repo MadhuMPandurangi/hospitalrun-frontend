@@ -6,7 +6,6 @@ import Appointments from 'scheduling/appointments/Appointments'
 import NewAppointment from 'scheduling/appointments/new/NewAppointment'
 import EditAppointment from 'scheduling/appointments/edit/EditAppointment'
 import ViewAppointment from 'scheduling/appointments/view/ViewAppointment'
-import Chair from './chair/Chair';
 import Breadcrumbs from 'breadcrumbs/Breadcrumbs'
 import { ButtonBarProvider } from 'page-header/ButtonBarProvider'
 import ButtonToolBar from 'page-header/ButtonToolBar'
@@ -18,6 +17,8 @@ import { RootState } from './store'
 import Navbar from './components/Navbar'
 import PrivateRoute from './components/PrivateRoute'
 import Patients from './patients/Patients'
+import Chair from './chair/Chair'
+import Feedback from './feedback/Feedback'
 
 const HospitalRun = () => {
   const { title } = useSelector((state: RootState) => state.title)
@@ -81,6 +82,13 @@ const HospitalRun = () => {
                     exact
                     path="/chair"
                     component={Chair}
+                  />
+
+                  <PrivateRoute
+                    isAuthenticated={permissions.includes(Permissions.ReadAppointments)}
+                    exact
+                    path="/feedback"
+                    component={Feedback}
                   />
                 </Switch>
               </div>
