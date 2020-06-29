@@ -1,63 +1,65 @@
-import '../../../__mocks__/matchMediaMock'
-import React from 'react'
-import configureMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
-import { mount } from 'enzyme'
-import { createMemoryHistory } from 'history'
-import { Router } from 'react-router'
-import { Provider } from 'react-redux'
 import * as components from '@hospitalrun/components'
 import format from 'date-fns/format'
+import { mount, ReactWrapper } from 'enzyme'
+import { createMemoryHistory } from 'history'
+import React from 'react'
 import { act } from 'react-dom/test-utils'
+import { Provider } from 'react-redux'
+import { Router } from 'react-router-dom'
+import createMockStore from 'redux-mock-store'
+import thunk from 'redux-thunk'
+
 import LabsTab from '../../../patients/labs/LabsTab'
-import Patient from '../../../model/Patient'
-import Lab from '../../../model/Lab'
-import Permissions from '../../../model/Permissions'
-import LabRepository from '../../../clients/db/LabRepository'
+import PatientRepository from '../../../shared/db/PatientRepository'
+import Lab from '../../../shared/model/Lab'
+import Patient from '../../../shared/model/Patient'
+import Permissions from '../../../shared/model/Permissions'
+import { RootState } from '../../../shared/store'
 
 const expectedPatient = {
   id: '123',
 } as Patient
 
-const labs = [
+const expectedLabs = [
   {
     id: 'labId',
-    patientId: '123',
+    patient: '123',
     type: 'type',
     status: 'requested',
     requestedOn: new Date().toISOString(),
   } as Lab,
 ]
 
-const mockStore = configureMockStore([thunk])
+const mockStore = createMockStore<RootState, any>([thunk])
 const history = createMemoryHistory()
 
 let user: any
 let store: any
 
-const setup = (patient = expectedPatient, permissions = [Permissions.WritePatients]) => {
-  user = { permissions }
-  store = mockStore({ patient, user })
-  jest.spyOn(LabRepository, 'findAllByPatientId').mockResolvedValue(labs)
-  const wrapper = mount(
-    <Router history={history}>
-      <Provider store={store}>
-        <LabsTab patientId={patient.id} />
-      </Provider>
-    </Router>,
-  )
+const setup = async (labs = expectedLabs) => {
+  jest.resetAllMocks()
+  user = { permissions: [Permissions.ReadPatients] }
+  store = mockStore({ patient: expectedPatient, user } as any)
+  jest.spyOn(PatientRepository, 'getLabs').mockResolvedValue(labs)
 
-  return wrapper
+  let wrapper: any
+  await act(async () => {
+    wrapper = await mount(
+      <Router history={history}>
+        <Provider store={store}>
+          <LabsTab patientId={expectedPatient.id} />
+        </Provider>
+      </Router>,
+    )
+  })
+
+  wrapper.update()
+  return { wrapper: wrapper as ReactWrapper }
 }
 
 describe('Labs Tab', () => {
   it('should list the patients labs', async () => {
-    const expectedLabs = labs
-    let wrapper: any
-    await act(async () => {
-      wrapper = await setup()
-    })
-    wrapper.update()
+    const { wrapper } = await setup()
 
     const table = wrapper.find('table')
     const tableHeader = wrapper.find('thead')
@@ -79,11 +81,7 @@ describe('Labs Tab', () => {
   })
 
   it('should render a warning message if the patient does not have any labs', async () => {
-    let wrapper: any
-
-    await act(async () => {
-      wrapper = await setup({ ...expectedPatient })
-    })
+    const { wrapper } = await setup([])
 
     const alert = wrapper.find(components.Alert)
 

@@ -1,18 +1,19 @@
-import '../../../__mocks__/matchMediaMock'
-import React from 'react'
-import { ReactWrapper, mount } from 'enzyme'
 import { Modal, Alert, Typeahead } from '@hospitalrun/components'
 import { act } from '@testing-library/react'
+import { ReactWrapper, mount } from 'enzyme'
+import React from 'react'
 import { Provider } from 'react-redux'
+import createMockStore, { MockStore } from 'redux-mock-store'
 import thunk from 'redux-thunk'
-import configureMockStore, { MockStore } from 'redux-mock-store'
-import Patient from 'model/Patient'
-import TextInputWithLabelFormGroup from '../../../components/input/TextInputWithLabelFormGroup'
-import AddRelatedPersonModal from '../../../patients/related-persons/AddRelatedPersonModal'
-import * as patientSlice from '../../../patients/patient-slice'
-import PatientRepository from '../../../clients/db/PatientRepository'
 
-const mockStore = configureMockStore([thunk])
+import * as patientSlice from '../../../patients/patient-slice'
+import AddRelatedPersonModal from '../../../patients/related-persons/AddRelatedPersonModal'
+import TextInputWithLabelFormGroup from '../../../shared/components/input/TextInputWithLabelFormGroup'
+import PatientRepository from '../../../shared/db/PatientRepository'
+import Patient from '../../../shared/model/Patient'
+import { RootState } from '../../../shared/store'
+
+const mockStore = createMockStore<RootState, any>([thunk])
 
 describe('Add Related Person Modal', () => {
   const patient = {
@@ -39,7 +40,7 @@ describe('Add Related Person Modal', () => {
 
     store = mockStore({
       patient: { patient },
-    })
+    } as any)
     beforeEach(() => {
       jest.spyOn(PatientRepository, 'find').mockResolvedValue(patient)
       jest.spyOn(PatientRepository, 'saveOrUpdate').mockResolvedValue(patient)
@@ -100,7 +101,7 @@ describe('Add Related Person Modal', () => {
           patient,
           relatedPersonError: expectedError,
         },
-      })
+      } as any)
       wrapper = mount(
         <Provider store={store}>
           <AddRelatedPersonModal show onCloseButtonClick={jest.fn()} toggle={jest.fn()} />
@@ -126,7 +127,7 @@ describe('Add Related Person Modal', () => {
       patient: {
         patient,
       },
-    })
+    } as any)
     beforeEach(() => {
       wrapper = mount(
         <Provider store={store}>

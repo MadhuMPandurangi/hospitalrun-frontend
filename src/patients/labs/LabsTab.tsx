@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
 import { Alert } from '@hospitalrun/components'
-import { useTranslation } from 'react-i18next'
 import format from 'date-fns/format'
-import { useHistory } from 'react-router'
-import Lab from '../../model/Lab'
-import LabRepository from '../../clients/db/LabRepository'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useHistory } from 'react-router-dom'
+
+import PatientRepository from '../../shared/db/PatientRepository'
+import Lab from '../../shared/model/Lab'
 
 interface Props {
   patientId: string
@@ -19,7 +20,7 @@ const LabsTab = (props: Props) => {
 
   useEffect(() => {
     const fetch = async () => {
-      const fetchedLabs = await LabRepository.findAllByPatientId(patientId)
+      const fetchedLabs = await PatientRepository.getLabs(patientId)
       setLabs(fetchedLabs)
     }
 

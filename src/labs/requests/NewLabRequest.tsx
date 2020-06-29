@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
-import useTitle from 'page-header/useTitle'
-import { useTranslation } from 'react-i18next'
 import { Typeahead, Label, Button, Alert } from '@hospitalrun/components'
-import PatientRepository from 'clients/db/PatientRepository'
-import Patient from 'model/Patient'
-import TextInputWithLabelFormGroup from 'components/input/TextInputWithLabelFormGroup'
-import { useHistory } from 'react-router'
-import Lab from 'model/Lab'
-import TextFieldWithLabelFormGroup from 'components/input/TextFieldWithLabelFormGroup'
-import useAddBreadcrumbs from 'breadcrumbs/useAddBreadcrumbs'
+import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
-import { requestLab } from 'labs/lab-slice'
-import { RootState } from 'store'
+import { useHistory } from 'react-router-dom'
+
+import useAddBreadcrumbs from '../../page-header/breadcrumbs/useAddBreadcrumbs'
+import useTitle from '../../page-header/title/useTitle'
+import TextFieldWithLabelFormGroup from '../../shared/components/input/TextFieldWithLabelFormGroup'
+import TextInputWithLabelFormGroup from '../../shared/components/input/TextInputWithLabelFormGroup'
+import PatientRepository from '../../shared/db/PatientRepository'
+import Lab from '../../shared/model/Lab'
+import Patient from '../../shared/model/Patient'
+import { RootState } from '../../shared/store'
+import { requestLab } from '../lab-slice'
 
 const NewLabRequest = () => {
   const { t } = useTranslation()
@@ -21,7 +22,7 @@ const NewLabRequest = () => {
   const { status, error } = useSelector((state: RootState) => state.lab)
 
   const [newLabRequest, setNewLabRequest] = useState({
-    patientId: '',
+    patient: '',
     type: '',
     notes: '',
     status: 'requested',
@@ -38,7 +39,7 @@ const NewLabRequest = () => {
   const onPatientChange = (patient: Patient) => {
     setNewLabRequest((previousNewLabRequest) => ({
       ...previousNewLabRequest,
-      patientId: patient.id,
+      patient: patient.id,
     }))
   }
 

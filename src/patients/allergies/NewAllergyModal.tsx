@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
 import { Modal, Alert } from '@hospitalrun/components'
+import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import Allergy from 'model/Allergy'
-import TextInputWithLabelFormGroup from 'components/input/TextInputWithLabelFormGroup'
 import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../../store'
+
+import TextInputWithLabelFormGroup from '../../shared/components/input/TextInputWithLabelFormGroup'
+import Allergy from '../../shared/model/Allergy'
+import { RootState } from '../../shared/store'
 import { addAllergy } from '../patient-slice'
 
 interface NewAllergyModalProps {

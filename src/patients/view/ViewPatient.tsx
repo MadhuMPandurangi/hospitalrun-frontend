@@ -1,24 +1,32 @@
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useParams, withRouter, Route, useHistory, useLocation } from 'react-router-dom'
 import { Panel, Spinner, TabsHeader, Tab, Button } from '@hospitalrun/components'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  useParams,
+  withRouter,
+  Route,
+  useHistory,
+  useLocation,
+  useRouteMatch,
+} from 'react-router-dom'
 
-import { useButtonToolbarSetter } from 'page-header/ButtonBarProvider'
-import Allergies from 'patients/allergies/Allergies'
-import Diagnoses from 'patients/diagnoses/Diagnoses'
-import useTitle from '../../page-header/useTitle'
-import { fetchPatient } from '../patient-slice'
-import { RootState } from '../../store'
-import { getPatientFullName } from '../util/patient-name-util'
-import Permissions from '../../model/Permissions'
-import Patient from '../../model/Patient'
-import GeneralInformation from '../GeneralInformation'
-import RelatedPerson from '../related-persons/RelatedPersonTab'
-import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
+import useAddBreadcrumbs from '../../page-header/breadcrumbs/useAddBreadcrumbs'
+import { useButtonToolbarSetter } from '../../page-header/button-toolbar/ButtonBarProvider'
+import useTitle from '../../page-header/title/useTitle'
+import Patient from '../../shared/model/Patient'
+import Permissions from '../../shared/model/Permissions'
+import { RootState } from '../../shared/store'
+import Allergies from '../allergies/Allergies'
 import AppointmentsList from '../appointments/AppointmentsList'
-import Note from '../notes/NoteTab'
+import CarePlanTab from '../care-plans/CarePlanTab'
+import Diagnoses from '../diagnoses/Diagnoses'
+import GeneralInformation from '../GeneralInformation'
 import Labs from '../labs/LabsTab'
+import Note from '../notes/NoteTab'
+import { fetchPatient } from '../patient-slice'
+import RelatedPerson from '../related-persons/RelatedPersonTab'
+import { getPatientFullName } from '../util/patient-name-util'
 
 const getPatientCode = (p: Patient): string => {
   if (p) {
@@ -33,6 +41,7 @@ const ViewPatient = () => {
   const history = useHistory()
   const dispatch = useDispatch()
   const location = useLocation()
+  const { path } = useRouteMatch()
 
   const { patient, status } = useSelector((state: RootState) => state.patient)
   const { permissions } = useSelector((state: RootState) => state.user)
@@ -119,28 +128,36 @@ const ViewPatient = () => {
           label={t('patient.labs.label')}
           onClick={() => history.push(`/patients/${patient.id}/labs`)}
         />
+        <Tab
+          active={location.pathname === `/patients/${patient.id}/care-plans`}
+          label={t('patient.carePlan.label')}
+          onClick={() => history.push(`/patients/${patient.id}/care-plans`)}
+        />
       </TabsHeader>
       <Panel>
-        <Route exact path="/patients/:id">
+        <Route exact path={path}>
           <GeneralInformation patient={patient} />
         </Route>
-        <Route exact path="/patients/:id/relatedpersons">
+        <Route exact path={`${path}/relatedpersons`}>
           <RelatedPerson patient={patient} />
         </Route>
-        <Route exact path="/patients/:id/appointments">
+        <Route exact path={`${path}/appointments`}>
           <AppointmentsList patientId={patient.id} />
         </Route>
-        <Route exact path="/patients/:id/allergies">
+        <Route exact path={`${path}/allergies`}>
           <Allergies patient={patient} />
         </Route>
-        <Route exact path="/patients/:id/diagnoses">
+        <Route exact path={`${path}/diagnoses`}>
           <Diagnoses patient={patient} />
         </Route>
-        <Route exact path="/patients/:id/notes">
+        <Route exact path={`${path}/notes`}>
           <Note patient={patient} />
         </Route>
-        <Route exact path="/patients/:id/labs">
+        <Route exact path={`${path}/labs`}>
           <Labs patientId={patient.id} />
+        </Route>
+        <Route path={`${path}/care-plans`}>
+          <CarePlanTab />
         </Route>
       </Panel>
     </div>

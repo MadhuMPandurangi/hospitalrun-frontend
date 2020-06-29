@@ -1,18 +1,19 @@
-import '../../../__mocks__/matchMediaMock'
-import React from 'react'
-import { mount } from 'enzyme'
 import { TextInput, Spinner } from '@hospitalrun/components'
-import { MemoryRouter } from 'react-router-dom'
-import { Provider } from 'react-redux'
-import thunk from 'redux-thunk'
-import configureStore from 'redux-mock-store'
-import { mocked } from 'ts-jest/utils'
-import { act } from 'react-dom/test-utils'
-import * as ButtonBarProvider from 'page-header/ButtonBarProvider'
 import format from 'date-fns/format'
+import { mount } from 'enzyme'
+import React from 'react'
+import { act } from 'react-dom/test-utils'
+import { Provider } from 'react-redux'
+import { MemoryRouter } from 'react-router-dom'
+import configureStore from 'redux-mock-store'
+import thunk from 'redux-thunk'
+import { mocked } from 'ts-jest/utils'
+
+import * as ButtonBarProvider from '../../../page-header/button-toolbar/ButtonBarProvider'
 import ViewPatients from '../../../patients/list/ViewPatients'
-import PatientRepository from '../../../clients/db/PatientRepository'
 import * as patientSlice from '../../../patients/patients-slice'
+import { UnpagedRequest } from '../../../shared/db/PageRequest'
+import PatientRepository from '../../../shared/db/PatientRepository'
 
 const middlewares = [thunk]
 const mockStore = configureStore(middlewares)
@@ -22,20 +23,25 @@ describe('Patients', () => {
     {
       id: '123',
       fullName: 'test test',
+      isApproximateDateOfBirth: false,
       givenName: 'test',
       familyName: 'test',
       code: 'P12345',
       sex: 'male',
       dateOfBirth: new Date().toISOString(),
+      phoneNumber: '99999999',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      rev: '',
     },
   ]
-  const mockedPatientRepository = mocked(PatientRepository, true)
 
   const setup = (isLoading?: boolean) => {
     const store = mockStore({
       patients: {
         patients,
         isLoading,
+        pageRequest: UnpagedRequest,
       },
     })
     return mount(
@@ -49,8 +55,19 @@ describe('Patients', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    jest.spyOn(PatientRepository, 'findAll')
-    mockedPatientRepository.findAll.mockResolvedValue([])
+    jest.spyOn(PatientRepository, 'findAll').mockResolvedValue([])
+    jest.spyOn(PatientRepository, 'search').mockResolvedValue([])
+  })
+
+  describe('initial load', () => {
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
+    it('should call fetchPatients only once', () => {
+      setup()
+      expect(PatientRepository.findAll).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('layout', () => {
@@ -113,14 +130,8 @@ describe('Patients', () => {
       const expectedSearchText = 'search text'
 
       act(() => {
-        ;(wrapper.find(TextInput).prop('onChange') as any)({
-          target: {
-            value: expectedSearchText,
-          },
-          preventDefault(): void {
-            // noop
-          },
-        } as React.ChangeEvent<HTMLInputElement>)
+        const onChange = wrapper.find(TextInput).prop('onChange') as any
+        onChange({ target: { value: expectedSearchText } })
       })
 
       act(() => {
@@ -130,7 +141,9 @@ describe('Patients', () => {
       wrapper.update()
 
       expect(searchPatientsSpy).toHaveBeenCalledTimes(1)
-      expect(searchPatientsSpy).toHaveBeenLastCalledWith(expectedSearchText)
+      expect(searchPatientsSpy).toHaveBeenLastCalledWith(expectedSearchText, {
+        sorts: [{ field: 'index', direction: 'asc' }],
+      })
     })
   })
 })

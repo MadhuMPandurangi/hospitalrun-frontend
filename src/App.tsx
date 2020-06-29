@@ -1,19 +1,23 @@
-import React, { Suspense } from 'react'
-import { BrowserRouter } from 'react-router-dom'
-import { Provider } from 'react-redux'
 import { Spinner } from '@hospitalrun/components'
-import HospitalRun from './HospitalRun'
+import React, { Suspense } from 'react'
+import { Provider } from 'react-redux'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
-import store from './store'
+import HospitalRun from './HospitalRun'
+import Login from './login/Login'
+import store from './shared/store'
 
 const App: React.FC = () => (
   <div>
     <Provider store={store}>
-      <Suspense fallback={<Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />}>
-        <BrowserRouter>
-          <HospitalRun />
-        </BrowserRouter>
-      </Suspense>
+      <BrowserRouter>
+        <Suspense fallback={<Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />}>
+          <Switch>
+            <Route exact path="/login" component={Login} />
+            <Route path="/" component={HospitalRun} />
+          </Switch>
+        </Suspense>
+      </BrowserRouter>
     </Provider>
   </div>
 )

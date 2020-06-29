@@ -1,22 +1,23 @@
-import '../../../__mocks__/matchMediaMock'
-import React from 'react'
-import { mount } from 'enzyme'
-import { Router, Route } from 'react-router-dom'
-import { Provider } from 'react-redux'
-import { mocked } from 'ts-jest/utils'
-import { createMemoryHistory } from 'history'
-import { act } from 'react-dom/test-utils'
-import configureMockStore, { MockStore } from 'redux-mock-store'
-import thunk from 'redux-thunk'
 import * as components from '@hospitalrun/components'
-import NewPatient from '../../../patients/new/NewPatient'
-import GeneralInformation from '../../../patients/GeneralInformation'
-import Patient from '../../../model/Patient'
-import * as patientSlice from '../../../patients/patient-slice'
-import * as titleUtil from '../../../page-header/useTitle'
-import PatientRepository from '../../../clients/db/PatientRepository'
+import { mount } from 'enzyme'
+import { createMemoryHistory } from 'history'
+import React from 'react'
+import { act } from 'react-dom/test-utils'
+import { Provider } from 'react-redux'
+import { Router, Route } from 'react-router-dom'
+import createMockStore, { MockStore } from 'redux-mock-store'
+import thunk from 'redux-thunk'
+import { mocked } from 'ts-jest/utils'
 
-const mockStore = configureMockStore([thunk])
+import * as titleUtil from '../../../page-header/title/useTitle'
+import GeneralInformation from '../../../patients/GeneralInformation'
+import NewPatient from '../../../patients/new/NewPatient'
+import * as patientSlice from '../../../patients/patient-slice'
+import PatientRepository from '../../../shared/db/PatientRepository'
+import Patient from '../../../shared/model/Patient'
+import { RootState } from '../../../shared/store'
+
+const mockStore = createMockStore<RootState, any>([thunk])
 
 describe('New Patient', () => {
   const patient = {
@@ -33,7 +34,7 @@ describe('New Patient', () => {
     mockedPatientRepository.save.mockResolvedValue(patient)
 
     history = createMemoryHistory()
-    store = mockStore({ patient: { patient: {} as Patient, createError: error } })
+    store = mockStore({ patient: { patient: {} as Patient, createError: error } } as any)
 
     history.push('/patients/new')
     const wrapper = mount(
@@ -93,12 +94,12 @@ describe('New Patient', () => {
     const generalInformationForm = wrapper.find(GeneralInformation)
 
     act(() => {
-      generalInformationForm.prop('onFieldChange')('givenName', 'first')
+      generalInformationForm.prop('onChange')(patient)
     })
 
     wrapper.update()
 
-    const saveButton = wrapper.find(components.Button).at(0)
+    const saveButton = wrapper.find('.btn-save').at(0)
     const onClick = saveButton.prop('onClick') as any
     expect(saveButton.text().trim()).toEqual('actions.save')
 
@@ -122,12 +123,12 @@ describe('New Patient', () => {
     const generalInformationForm = wrapper.find(GeneralInformation)
 
     act(() => {
-      generalInformationForm.prop('onFieldChange')('givenName', 'first')
+      generalInformationForm.prop('onChange')(patient)
     })
 
     wrapper.update()
 
-    const saveButton = wrapper.find(components.Button).at(0)
+    const saveButton = wrapper.find('.btn-save').at(0)
     const onClick = saveButton.prop('onClick') as any
     expect(saveButton.text().trim()).toEqual('actions.save')
 
@@ -149,7 +150,7 @@ describe('New Patient', () => {
       wrapper = await setup()
     })
 
-    const cancelButton = wrapper.find(components.Button).at(1)
+    const cancelButton = wrapper.find('.btn-cancel').at(0)
     const onClick = cancelButton.prop('onClick') as any
     expect(cancelButton.text().trim()).toEqual('actions.cancel')
 

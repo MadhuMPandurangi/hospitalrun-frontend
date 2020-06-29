@@ -1,7 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import Patient from '../model/Patient'
-import PatientRepository from '../clients/db/PatientRepository'
-import { AppThunk } from '../store'
+
+import PatientRepository from '../shared/db/PatientRepository'
+import SortRequest, { Unsorted } from '../shared/db/SortRequest'
+import Patient from '../shared/model/Patient'
+import { AppThunk } from '../shared/store'
 
 interface PatientsState {
   isLoading: boolean
@@ -30,15 +32,21 @@ const patientsSlice = createSlice({
 })
 export const { fetchPatientsStart, fetchPatientsSuccess } = patientsSlice.actions
 
-export const fetchPatients = (): AppThunk => async (dispatch) => {
+export const fetchPatients = (sortRequest: SortRequest = Unsorted): AppThunk => async (
+  dispatch,
+) => {
   dispatch(fetchPatientsStart())
-  const patients = await PatientRepository.findAll()
+  const patients = await PatientRepository.findAll(sortRequest)
   dispatch(fetchPatientsSuccess(patients))
 }
 
-export const searchPatients = (searchString: string): AppThunk => async (dispatch) => {
+export const searchPatients = (
+  searchString: string,
+  sortRequest: SortRequest = Unsorted,
+): AppThunk => async (dispatch) => {
   dispatch(fetchPatientsStart())
 
+  console.log(sortRequest)
   let patients
   if (searchString.trim() === '') {
     patients = await PatientRepository.findAll()

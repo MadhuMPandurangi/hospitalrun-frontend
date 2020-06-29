@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'
 import { Modal, Alert } from '@hospitalrun/components'
+import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import Diagnosis from 'model/Diagnosis'
-import TextInputWithLabelFormGroup from 'components/input/TextInputWithLabelFormGroup'
-import DatePickerWithLabelFormGroup from 'components/input/DatePickerWithLabelFormGroup'
 import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../../store'
+
+import DatePickerWithLabelFormGroup from '../../shared/components/input/DatePickerWithLabelFormGroup'
+import TextInputWithLabelFormGroup from '../../shared/components/input/TextInputWithLabelFormGroup'
+import Diagnosis from '../../shared/model/Diagnosis'
+import { RootState } from '../../shared/store'
 import { addDiagnosis } from '../patient-slice'
 
 interface Props {

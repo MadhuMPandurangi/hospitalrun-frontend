@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { useHistory } from 'react-router'
-import { useTranslation } from 'react-i18next'
 import { Spinner, Button, Container, Row, TextInput, Column } from '@hospitalrun/components'
-import { useButtonToolbarSetter } from 'page-header/ButtonBarProvider'
 import format from 'date-fns/format'
-import { RootState } from '../../store'
-import { fetchPatients, searchPatients } from '../patients-slice'
-import useTitle from '../../page-header/useTitle'
-import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
-import useDebounce from '../../hooks/debounce'
+import React, { useEffect, useState, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useSelector, useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+
+import useAddBreadcrumbs from '../../page-header/breadcrumbs/useAddBreadcrumbs'
+import { useButtonToolbarSetter } from '../../page-header/button-toolbar/ButtonBarProvider'
+import useTitle from '../../page-header/title/useTitle'
+import SortRequest from '../../shared/db/SortRequest'
+import useDebounce from '../../shared/hooks/useDebounce'
+import useUpdateEffect from '../../shared/hooks/useUpdateEffect'
+import { RootState } from '../../shared/store'
+import { searchPatients } from '../patients-slice'
 
 const breadcrumbs = [{ i18nKey: 'patients.label', location: '/patients' }]
 
@@ -26,14 +29,25 @@ const ViewPatients = () => {
   const [searchText, setSearchText] = useState<string>('')
 
   const debouncedSearchText = useDebounce(searchText, 500)
+  const debouncedSearchTextRef = useRef<string>('')
+
+  useUpdateEffect(() => {
+    const sortRequest: SortRequest = {
+      sorts: [{ field: 'index', direction: 'asc' }],
+    }
+    dispatch(searchPatients(debouncedSearchTextRef.current, sortRequest))
+  }, [dispatch])
 
   useEffect(() => {
-    dispatch(searchPatients(debouncedSearchText))
+    const sortRequest: SortRequest = {
+      sorts: [{ field: 'index', direction: 'asc' }],
+    }
+
+    debouncedSearchTextRef.current = debouncedSearchText
+    dispatch(searchPatients(debouncedSearchText, sortRequest))
   }, [dispatch, debouncedSearchText])
 
   useEffect(() => {
-    dispatch(fetchPatients())
-
     setButtonToolBar([
       <Button
         key="newPatientButton"
@@ -82,21 +96,22 @@ const ViewPatients = () => {
   }
 
   return (
-    <Container>
-      <Row>
-        <Column md={12}>
-          <TextInput
-            size="lg"
-            type="text"
-            onChange={onSearchBoxChange}
-            value={searchText}
-            placeholder={t('actions.search')}
-          />
-        </Column>
-      </Row>
-
-      <Row> {isLoading ? loadingIndicator : table}</Row>
-    </Container>
+    <div>
+      <Container>
+        <Row>
+          <Column md={12}>
+            <TextInput
+              size="lg"
+              type="text"
+              onChange={onSearchBoxChange}
+              value={searchText}
+              placeholder={t('actions.search')}
+            />
+          </Column>
+        </Row>
+        <Row> {isLoading ? loadingIndicator : table}</Row>
+      </Container>
+    </div>
   )
 }
 

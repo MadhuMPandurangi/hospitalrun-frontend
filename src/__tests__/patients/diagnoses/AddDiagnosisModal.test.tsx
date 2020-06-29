@@ -1,20 +1,21 @@
-import '../../../__mocks__/matchMediaMock'
-import React from 'react'
-import { mount } from 'enzyme'
 import { Modal, Alert } from '@hospitalrun/components'
 import { act } from '@testing-library/react'
-import AddDiagnosisModal from 'patients/diagnoses/AddDiagnosisModal'
+import { mount } from 'enzyme'
+import React from 'react'
+import { Provider } from 'react-redux'
 import createMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
-import { Provider } from 'react-redux'
-import TextInputWithLabelFormGroup from '../../../components/input/TextInputWithLabelFormGroup'
-import DatePickerWithLabelFormGroup from '../../../components/input/DatePickerWithLabelFormGroup'
-import Diagnosis from '../../../model/Diagnosis'
-import * as patientSlice from '../../../patients/patient-slice'
-import PatientRepository from '../../../clients/db/PatientRepository'
-import Patient from '../../../model/Patient'
 
-const mockStore = createMockStore([thunk])
+import AddDiagnosisModal from '../../../patients/diagnoses/AddDiagnosisModal'
+import * as patientSlice from '../../../patients/patient-slice'
+import DatePickerWithLabelFormGroup from '../../../shared/components/input/DatePickerWithLabelFormGroup'
+import TextInputWithLabelFormGroup from '../../../shared/components/input/TextInputWithLabelFormGroup'
+import PatientRepository from '../../../shared/db/PatientRepository'
+import Diagnosis from '../../../shared/model/Diagnosis'
+import Patient from '../../../shared/model/Patient'
+import { RootState } from '../../../shared/store'
+
+const mockStore = createMockStore<RootState, any>([thunk])
 
 describe('Add Diagnosis Modal', () => {
   beforeEach(() => {
@@ -29,7 +30,7 @@ describe('Add Diagnosis Modal', () => {
           id: '1234',
         },
       },
-    })
+    } as any)
     const wrapper = mount(
       <Provider store={store}>
         <AddDiagnosisModal show onCloseButtonClick={jest.fn()} />
@@ -56,7 +57,7 @@ describe('Add Diagnosis Modal', () => {
       patient: {
         diagnosisError: expectedDiagnosisError,
       },
-    })
+    } as any)
     const wrapper = mount(
       <Provider store={store}>
         <AddDiagnosisModal show onCloseButtonClick={jest.fn()} />
@@ -87,7 +88,7 @@ describe('Add Diagnosis Modal', () => {
             id: '1234',
           },
         },
-      })
+      } as any)
       const wrapper = mount(
         <Provider store={store}>
           <AddDiagnosisModal show onCloseButtonClick={onCloseButtonClickSpy} />
@@ -127,7 +128,7 @@ describe('Add Diagnosis Modal', () => {
         patient: {
           patient,
         },
-      })
+      } as any)
       const wrapper = mount(
         <Provider store={store}>
           <AddDiagnosisModal show onCloseButtonClick={jest.fn()} />
