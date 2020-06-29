@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { useTranslation } from 'react-i18next'
-import useTitle from '../page-header/useTitle'
+import useTitle from '../page-header/title/useTitle'
 import Uparrow from './upArrow';
 import Leftarrow from './leftArrow';
 import Rightarrow from './rightArrow';
 import Downarrow from './downArrow';
 import Refresh from './refresh';
 import { Container, Row, Col } from 'react-bootstrap';
+
 
 
 const Chair = () => {

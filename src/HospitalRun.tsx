@@ -1,6 +1,7 @@
 import { Toaster } from '@hospitalrun/components'
 import React from 'react'
 import { useSelector } from 'react-redux'
+
 import { Redirect, Route, Switch } from 'react-router-dom'
 
 import Dashboard from './dashboard/Dashboard'

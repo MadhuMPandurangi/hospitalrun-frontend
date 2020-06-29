@@ -13,6 +13,7 @@ import appointment from '../../scheduling/appointments/appointment-slice'
 import appointments from '../../scheduling/appointments/appointments-slice'
 import user from '../../user/user-slice'
 import components from '../components/component-slice'
+import chair from '../components/component-slice'
 
 const reducer = combineReducers({
   patient,
@@ -27,6 +28,7 @@ const reducer = combineReducers({
   incident,
   incidents,
   labs,
+  chair,
 })
 
 const store = configureStore({
