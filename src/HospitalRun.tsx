@@ -2,7 +2,8 @@ import { Toaster } from '@hospitalrun/components'
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-import { Redirect, Route, Switch } from 'react-router-dom'
+// import { Redirect, Route, Switch } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 
 import Dashboard from './dashboard/Dashboard'
 import Incidents from './incidents/Incidents'
@@ -23,11 +24,11 @@ import { RootState } from './shared/store'
 const HospitalRun = () => {
   const { title } = useSelector((state: RootState) => state.title)
   const { sidebarCollapsed } = useSelector((state: RootState) => state.components)
-  const { user } = useSelector((root: RootState) => root.user)
+  //const { user } = useSelector((root: RootState) => root.user)
 
-  if (user === undefined) {
-    return <Redirect to="/login" />
-  }
+  // if (user === undefined) {
+  //   return <Redirect to="/login" />
+  // }
 
   return (
     <div>
